@@ -1,0 +1,118 @@
+1. Insert Element (Document) in MongoDB Shell
+use myDatabase
+
+A: db.students.insertOne({
+    name: "Debasmita",
+    branch: "CSE",
+    semester: 3,
+    age: 20
+})
+
+
+If you want to insert multiple:
+
+db.students.insertMany([
+    { name: "Amit", branch: "IT", semester: 2 },
+    { name: "Riya", branch: "ECE", semester: 4 }
+])
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2. Delete 1 Element in MongoDB Shell
+
+Delete one document:
+
+A: db.students.deleteOne({ name: "Amit" })
+
+
+Delete using _id:
+
+db.students.deleteOne({ _id: ObjectId("65f2c3b123456789abcd1234") })
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+3. Write a Python program to read image files from a directory, extract EXIF metadata such as device brand, model, GPS coordinates, and user information, and organize the images into different folders based on:
+
+Device brand and model
+
+User name
+
+Location (Inside or Outside Adamas University)
+
+GPS coordinates
+
+Device category (Android, Apple, No Metadata)
+
+A: import os, shutil, exifread
+
+SRC = "images"
+DST = "sorted"
+
+def brand(model):
+    if not model: return "Unknown"
+    m = model.upper()
+    if m.startswith("SM"): return "Samsung"
+    if m.startswith(("CPH","PFT")): return "OPPO"
+    if m.startswith("RMX"): return "Realme"
+    if "VIVO" in m: return "Vivo"
+    if "IPHONE" in m: return "Apple"
+    return "Other"
+
+for f in os.listdir(SRC):
+    if f.lower().endswith((".jpg",".jpeg",".png")):
+        with open(os.path.join(SRC,f),'rb') as img:
+            t = exifread.process_file(img,details=False)
+
+        model = str(t.get("Image Model","NoModel"))
+        user  = str(t.get("Image Artist","UnknownUser"))
+        gps   = "GPS" if "GPS GPSLatitude" in t else "NoGPS"
+        cat   = "Apple" if "iPhone" in model else "Android" if model!="NoModel" else "NoMetadata"
+
+        loc = os.path.join(DST,brand(model),user,gps,cat)
+        os.makedirs(loc,exist_ok=True)
+        shutil.copy(os.path.join(SRC,f),loc)
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+4. Write the script to insert the date and time from the api after every 1000ms. Mongosh should hit the api and insert the response in the existing mongodb collections .( https://classmonitor.aucseapp.in/get_date_time.php)
+
+A: const { MongoClient } = require("mongodb");
+const https = require("https");
+
+(async () => {
+  const c = new MongoClient("mongodb://localhost:27017");
+  await c.connect();
+  const col = c.db("collegeDB").collection("timeData");
+
+  setInterval(() => {
+    https.get("https://worldtimeapi.org/api/timezone/Asia/Kolkata", r => {
+      let d = "";
+      r.on("data", x => d += x);
+      r.on("end", () => col.insertOne({ datetime: JSON.parse(d).datetime }));
+    });
+  }, 1000);
+})();
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+5. Write a query to update an existing data (from question 4)
+
+A: Update One:
+db.dateTimeData.updateOne(
+    { "api_response.date": "2026-02-17" },
+    {
+        $set: {
+            updatedField: "Updated Successfully",
+            modifiedAt: new Date()
+        }
+    }
+)
+
+Update Latest Inserted Document:
+db.dateTimeData.updateOne(
+    {},
+    {
+        $set: { status: "Latest Updated" }
+    },
+    { sort: { insertedAt: -1 } }
+)
