@@ -45,3 +45,36 @@ This repository contains MongoDB and scripting lab exercises.
 
 ## Author
 Debasmita Bose, B.Tech CSE (3rd yr)
+
+---
+
+## Kafka + MongoDB Producer/Consumer
+
+### Setup
+1. Install Python dependencies:
+   ```bash
+   .venv/Scripts/python -m pip install -r requirements.txt
+   ```
+2. Start Docker services:
+   ```bash
+   docker compose up -d
+   ```
+
+### Run
+- Producer:
+   ```bash
+   .venv/Scripts/python producer.py
+   ```
+- Consumer:
+   ```bash
+   .venv/Scripts/python consumer.py
+   ```
+
+### Verify
+- Kafka: `localhost:9092`
+- MongoDB: `mongodb://localhost:27017`
+- Topic: `iot_sensor_data`
+
+### Notes
+- `producer.py` sends sample sensor payloads to Kafka.
+- `consumer.py` reads from Kafka and stores the data in MongoDB.
