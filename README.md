@@ -1,80 +1,102 @@
 # UDB LAB WORKS
 
-This repository contains MongoDB and scripting lab exercises.
+A collection of database and scripting lab exercises built around MongoDB, Python, Kafka, and automation workflows.
 
-## Contents
+## Repository Overview
 
-### 1. Insert Document in MongoDB
-- Use database: `use myDatabase`
-- Insert one document using `insertOne()`
-- Insert multiple documents using `insertMany()`
+This project contains:
+- MongoDB CRUD examples and lab notes
+- A Kafka producer that generates sample IoT sensor data
+- A Kafka consumer that ingests sensor events into MongoDB
+- Python tooling and Docker Compose configuration for local development
 
-### 2. Delete Document in MongoDB
-- Delete a document using `deleteOne()`
-- Delete using `_id` with `ObjectId`
+## Project Contents
 
-### 3. Python EXIF Metadata Organizer
-- Reads image files from a directory
-- Extracts EXIF metadata (device model, user, GPS)
-- Categorizes images based on:
-  - Device brand
-  - User name
-  - GPS availability
-  - Device category (Android / Apple / No Metadata)
-- Organizes images into structured folders
+### MongoDB Labs
+- Insert documents using `insertOne()` and `insertMany()`
+- Delete documents using `deleteOne()` and object `_id`
+- Update documents using `updateOne()` and query sorting
+- Other MongoDB scripting exercises and examples
 
-### 4. API to MongoDB Automation Script
-- Node.js script
-- Hits an API every 1000ms
-- Extracts date and time
-- Inserts response into MongoDB collection
+### Kafka + MongoDB Integration
+- `producer.py`: publishes simulated IoT sensor messages to Kafka topic `iot_sensor_data`
+- `consumer.py`: consumes Kafka messages and inserts them into MongoDB collection `iot_db.sensor_data`
 
-### 5. Update MongoDB Documents
-- Update specific document using `updateOne()`
-- Update latest inserted document using sort option
+### Additional Notes
+- A Python EXIF metadata organizer is part of the lab exercises (described in repository notes)
+- A Node.js API automation script was also included as a lab exercise
 
----
+## Prerequisites
 
-## Technologies Used
-- MongoDB (mongosh)
-- Python
-- Node.js
-- REST API
+- Python 3.11+ (or compatible)
+- Docker Desktop with Compose support
+- A local Python virtual environment (optional but recommended)
+- `pip` for installing dependencies
 
----
+## Setup
 
-## Author
-Debasmita Bose, B.Tech CSE (3rd yr)
-
----
-
-## Kafka + MongoDB Producer/Consumer
-
-### Setup
-1. Install Python dependencies:
+1. Create and activate a virtual environment (if not already present):
    ```bash
-   .venv/Scripts/python -m pip install -r requirements.txt
+   python -m venv .venv
+   .venv\Scripts\activate
    ```
-2. Start Docker services:
+2. Install Python dependencies:
+   ```bash
+   .venv\Scripts\python -m pip install -r requirements.txt
+   ```
+3. Start Docker services:
    ```bash
    docker compose up -d
    ```
 
-### Run
-- Producer:
-   ```bash
-   .venv/Scripts/python producer.py
-   ```
-- Consumer:
-   ```bash
-   .venv/Scripts/python consumer.py
-   ```
+## Running the Kafka + MongoDB Demo
 
-### Verify
-- Kafka: `localhost:9092`
-- MongoDB: `mongodb://localhost:27017`
-- Topic: `iot_sensor_data`
+### Start the Kafka producer
 
-### Notes
-- `producer.py` sends sample sensor payloads to Kafka.
-- `consumer.py` reads from Kafka and stores the data in MongoDB.
+```bash
+.venv\Scripts\python producer.py
+```
+
+### Start the Kafka consumer
+
+```bash
+.venv\Scripts\python consumer.py
+```
+
+### Expected behavior
+
+- The producer sends sample sensor payloads every second to Kafka
+- The consumer reads messages from topic `iot_sensor_data`
+- Each message is inserted into MongoDB at `mongodb://localhost:27017`
+
+## Docker Compose Services
+
+- `broker`: Apache Kafka broker available at `localhost:9092`
+- `mongodb`: MongoDB server available at `localhost:27017`
+
+## Dependency Summary
+
+- `kafka-python==2.3.1`
+- `pymongo==4.16.0`
+
+## Useful Commands
+
+- Stop Docker Compose:
+  ```bash
+  docker compose down
+  ```
+- View Docker Compose logs:
+  ```bash
+  docker compose logs -f
+  ```
+
+## File Summary
+
+- `producer.py`: sends JSON sensor data to Kafka
+- `consumer.py`: reads Kafka records and writes to MongoDB
+- `docker-compose.yml`: launches Kafka and MongoDB services
+- `requirements.txt`: Python dependencies
+- `UDB.txt`: additional notes or lab references
+
+## Author
+Debasmita Bose, B.Tech CSE (3rd yr)
