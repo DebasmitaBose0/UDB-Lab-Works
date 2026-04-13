@@ -19,12 +19,17 @@ This project contains:
 - Other MongoDB scripting exercises and examples
 
 ### Kafka + MongoDB Integration
-- `producer.py`: publishes simulated IoT sensor messages to Kafka topic `iot_sensor_data`
-- `consumer.py`: consumes Kafka messages and inserts them into MongoDB collection `iot_db.sensor_data`
+- `producer.py`: publishes simulated IoT sensor messages every second to Kafka topic `iot_sensor_data`.
+  - Generates JSON payloads containing `timestamp`, `sensor_id`, `temperature`, and `status`.
+  - Uses `kafka-python.KafkaProducer` with `value_serializer` to encode JSON as UTF-8.
+- `consumer.py`: consumes Kafka messages from topic `iot_sensor_data` and stores them in MongoDB.
+  - Connects to Kafka via `KafkaConsumer` with `auto_offset_reset='latest'`, `enable_auto_commit=True`, and group id `iot-mongo-consumer`.
+  - Deserializes JSON payloads and adds `ingested_at` with the UTC timestamp.
+  - Inserts each document into MongoDB collection `iot_db.sensor_data` using `pymongo.MongoClient`.
 
 ### Additional Notes
-- A Python EXIF metadata organizer is part of the lab exercises (described in repository notes)
-- A Node.js API automation script was also included as a lab exercise
+- A Python EXIF metadata organizer is part of the lab exercises (described in repository notes).
+- A Node.js API automation script was also included as a lab exercise.
 
 ## Prerequisites
 
